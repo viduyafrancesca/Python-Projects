@@ -60,4 +60,89 @@ def number_of_vowels(string):
 def palindrome(string):
     return True if string[::-1] == string else False
 
-print(palindrome("raceca"))
+# Ex 6: Count words in a string, read from a text file and generate summary
+import re
+def count_words(string):
+    filePath = "Exercises/"+string
+    count = 0
+    try:
+        file = open(filePath,"r")
+        for x in file.readlines():
+            count += len(re.split(r"[.,;:!?\s]\s*", x.strip())) #Split including period, comma, semicolon, colon, exclamation, question mark, spaces
+    except OSError as e:
+        return "File not found"
+    return count
+
+# Ex 7: Text editor: Notepad that can open, edit, and save text documents
+def notepad():
+    userChoice = 0
+    userCreatedFilenames = []
+    userChoice = int(input("[1]View Files\n[2]Read File\n[3]Edit File\n[4]Create File\n[0]Exit "))
+    
+    while userChoice >=1:
+        if userChoice == 1:
+            print(printFilenames(userCreatedFilenames))
+        elif userChoice == 2:
+            checkExistingFiles = printFilenames(userCreatedFilenames)
+            print(checkExistingFiles)
+            if checkExistingFiles != "No files created yet":
+                try:
+                    fileName = "Exercises/"+input("Enter filename to read: ")
+                    file = open(fileName,"r")
+                    for x in file.readlines():
+                        print(x)
+                except OSError as e:
+                    print("File not found")
+        elif userChoice == 3:
+            checkExistingFiles = printFilenames(userCreatedFilenames)
+            print(checkExistingFiles)
+            if checkExistingFiles != "No files created yet":
+                editFile = input("Enter name of file to edit: ")
+                appendOrOverwite = input("Choose action:\n[1]Append\n[2]Overwrite")
+                fileName = "Exercises/"+editFile
+                file = open(fileName,"r") #read the file first
+                for x in file.readlines():
+                    print(x)
+                newLines = []
+                while True:
+                    line = input()
+                    if not line:
+                        break
+                    newLines.append(line+"\n")
+                
+                if appendOrOverwite == 1:
+                    file = open(fileName, "a")
+                    for x in newLines:
+                        print(x)
+                        file.write(x)
+                elif appendOrOverwite == 2:
+                    file = open(fileName, "w")
+                    for x in newLines:
+                        file.write(x)
+        elif userChoice == 4:
+            fileName = input("Enter filename with .txt extension: ")
+            filePath = "Exercises/"+fileName
+            print("Enter contents of file below and double enter once done")
+            contents = []
+            while True:
+                line = input()
+                if not line:
+                    break
+                contents.append(line+"\n")
+            
+            file = open(filePath, "w")
+            for x in contents:
+                print(x)
+                file.write(x)
+            userCreatedFilenames.append(fileName)
+        userChoice = int(input("[1]View Files\n[2]Read File\n[3]Edit File\n[4]Create File\n[0]Exit "))
+    
+    return "Program Terminated"
+
+
+def printFilenames(userCreatedFilenames):
+    if len(userCreatedFilenames) == 0:
+        return "No files created yet"
+    return [x for x in userCreatedFilenames]
+
+print(notepad())
