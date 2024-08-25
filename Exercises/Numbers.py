@@ -8,41 +8,44 @@ def check_if_number(n):
 def pi_to_nth(n):
     # n = int(input("Enter Nth place (0 to 15): "))
     if n < 0: 
-        return "Enter number greater than 0"
+        return "Enter number greater than or equal to 0"
     elif n > 0 and n > 15:
         return "Enter number from 0 to 15 only"
+    elif n == 0:
+        return 3
     else:
-        return "Pi to the Nth place:",round(math.pi,n)
-
+        return round(math.pi,n)
+    
 # Exercise 2: Find e to the nth place
 def e_to_nth(n):
     # n = int(input("Enter Nth place (0 to 15): "))
     if n < 0: 
-        return "Enter number greater than 0"
+        return "Enter number greater than or equal to 0"
     elif n > 0 and n > 15:
         return "Enter number from 0 to 15 only"
+    elif n == 0:
+        return 2
     else:
-        return "e to the Nth place:",round(math.e,n)
-
+        return round(math.e,n)
+    
 # Exercise 3: Find fibonacci sequence to the nth number
 def fibonacci_sequence(n):
     # 0 1 1 2 3 5 8 13 21
     fibonacciArray = [0, 1]
-    if n <= len(fibonacciArray):
-        return fibonacciArray[n-1]
+    if n <= 0:
+        return "Error"
     else:
         # print(len(fibonacciArray)-1, n-2)
         for x in range(len(fibonacciArray),n):
             fibonacciArray.append(fibonacciArray[x-1] + fibonacciArray[x-2])
         return fibonacciArray
-    
 
 # Exercise 4: Prime Factorization (find all prime factors of n)
 def prime_factorization(n):
     factorCount = 0
     primeFactors = []
     if n == 1:
-        print("1 is neither prime nor composite")
+        return "1 is neither prime nor composite"
     else:
         # Step 1: Divide n by 2 until n becomes odd
         while n%2==0: 
@@ -50,8 +53,8 @@ def prime_factorization(n):
             n = n//2
 
         # Step 2: Get odd prime factors
-        for x in range(3, int(math.sqrt(n)+1),2):
-            if n%x==0:
+        for x in range(3, int(math.sqrt(n))+1,2):
+            while n%x==0:
                 primeFactors.append(x)
                 n = n//x
         
@@ -60,7 +63,7 @@ def prime_factorization(n):
 
         primeFactors.sort()
         return primeFactors
-
+    
 # Exercise 5: Find prime numbers until user chooses to stop asking for next one
 def next_prime_number(n):
     primeNumbers = prime_factorization(n)
@@ -93,13 +96,3 @@ def mortage_calculator(mortgageAmount, yearsToPay, interestRate):
 # Exercise 8: Figure out how much quarter (.25), dime (.10), nickel (.05), penny (.01) to give for a change
 # def change_return_program(cost, amountTendered):
 #     change = amountTendered - cost
-    
-
-
-# print(pi_to_nth(2))
-# print(e_to_nth(2))
-# print(fibonacci_sequence(3))
-# print(prime_factorization(315))
-# print(next_prime_number(315))
-# print(cost_to_cover(50, 100, 0.5))
-# print(mortage_calculator(200000, 30, 6.5))

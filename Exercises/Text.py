@@ -73,7 +73,7 @@ def count_words(string):
         return "File not found"
     return count
 
-# Ex 7: Text editor: Notepad that can open, edit, and save text documents
+# Ex 7: Text editor: Notepad that can open, edit, save, and create text documents
 def notepad():
     userChoice = 0
     userCreatedFilenames = []
@@ -81,11 +81,11 @@ def notepad():
     
     while userChoice >=1:
         if userChoice == 1:
-            print(printFilenames(userCreatedFilenames))
+            userCreatedFilenames = [x for x in printFilenames()]
+            print(userCreatedFilenames)
         elif userChoice == 2:
-            checkExistingFiles = printFilenames(userCreatedFilenames)
-            print(checkExistingFiles)
-            if checkExistingFiles != "No files created yet":
+            checkExistingFiles = printFilenames()
+            if len(checkExistingFiles) > 0:
                 try:
                     fileName = "Exercises/"+input("Enter filename to read: ")
                     file = open(fileName,"r")
@@ -94,9 +94,9 @@ def notepad():
                 except OSError as e:
                     print("File not found")
         elif userChoice == 3:
-            checkExistingFiles = printFilenames(userCreatedFilenames)
+            checkExistingFiles = printFilenames()
             print(checkExistingFiles)
-            if checkExistingFiles != "No files created yet":
+            if len(checkExistingFiles) > 0:
                 editFile = input("Enter name of file to edit: ")
                 appendOrOverwite = input("Choose action:\n[1]Append\n[2]Overwrite")
                 fileName = "Exercises/"+editFile
@@ -140,9 +140,14 @@ def notepad():
     return "Program Terminated"
 
 
-def printFilenames(userCreatedFilenames):
-    if len(userCreatedFilenames) == 0:
-        return "No files created yet"
-    return [x for x in userCreatedFilenames]
+import os #For getting text files
+def printFilenames():
+    userCreatedFilenames = []
+    for file in os.listdir("Exercises"):
+        if file.endswith(".txt"):
+            userCreatedFilenames.append(os.path.join("", file))
 
+    return userCreatedFilenames
+
+# Ex 8: RSS Feed Reader
 print(notepad())

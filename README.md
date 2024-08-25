@@ -17,7 +17,7 @@ A list of practical projects that anyone can solve in any programming language (
 4. Number of vowels: Print number of vowels in a string.
 5. Palindrome checker: Check if user-given string is a palindrome.
 6. Count words in string: Count words in user-given text file.
-7. Text editor: Notepad that can open, edit, and save text documents.
+7. Text editor: Notepad that can open, edit, save, and create text documents.
 
 # Note
 This is a work-in-progress, this repository was created to track the progress of my practice in Python. Although inspired by the link above, it can contain other practice topics specific to Python. Thank you!
