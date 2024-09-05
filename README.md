@@ -1,5 +1,6 @@
 # Python-Projects
 
+# Exercises
 A list of practical projects that anyone can solve in any programming language (I decided to practice on Python). These projects are divided in multiple categories, and each category has its own folder. Inspired by the list from https://github.com/karan/Projects
 
 # Numbers
@@ -21,6 +22,9 @@ A list of practical projects that anyone can solve in any programming language (
 
 # Networking
 1. FTP Program - A file transfer program which can transfer files back and forth from a remote web sever. Used DLPTEST as test FTP Server.
+
+# AI
+1. openaitest.ipynb - Backend for Chat Completion using gpt-4o-mini API.
 
 # Note
 This is a work-in-progress, this repository was created to track the progress of my practice in Python. Although inspired by the link above, it can contain other practice topics specific to Python. Thank you!
