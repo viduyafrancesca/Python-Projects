@@ -1,18 +1,18 @@
 from flask import Flask, request, render_template, redirect, url_for
-import smtplib, re
+import smtplib, openai
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
 from email import encoders
 from ics import Calendar, Event
-from ics.grammar.parse import ContentLine  # Import to handle custom ICS lines like organizer
-from datetime import datetime, timedelta
-# import re
+from datetime import datetime
 
 app = Flask(__name__)
-
 # Organizer details
-ORGANIZER_NAME = 'ORGANIZER NAME'
+ORGANIZER_NAME = '<ORGANIZER NAME>'
+
+# Initialize OpenAI API key
+openai.api_key = 'sk-'
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -22,48 +22,53 @@ def index():
         subject = request.form['subject']
         body = request.form['body']
 
-        # Generate calendar invite
-        # extract_datetime_from_body = 
-        calendar_attachment = generate_ics_event(subject, body)
-
-        # Send the email with calendar invite
-        send_email(to, cc, subject, body, calendar_attachment)
-
-        return redirect(url_for('success'))
+        # Extract date and time using ChatGPT
+        event_datetime, end_hour = extract_datetime_from_body(body)
+        print(event_datetime, end_hour)
+        if event_datetime:
+            # Generate calendar invite
+            calendar_attachment = generate_ics_event(subject, body, event_datetime, end_hour)
+            # Send the email with calendar invite
+            send_email(to, cc, subject, body, calendar_attachment)
+            return redirect(url_for('success'))
+        else:
+            return "Could not extract date/time from the body."
 
     return render_template('index.html')
 
 @app.route('/success')
 def success():
     return render_template('success.html')
-
-def extract_datetime_from_body(body):
-    # Regular expression to detect date and time in the format: "Aug 16, 2024 9-10am"
-    date_time_pattern = r'((?:[A-Za-z]{3})|(?:January|February|March|April|May|June|July|August|September|October|November|December)) (\d{1,2})(?:, (\d{4}))? (\d{1,2})-(\d{1,2})(am|pm)'
     
-    match = re.search(date_time_pattern, body)
-    if match:
-        # Extract matched groups (Month, Day, Year, Start Hour, End Hour, AM/PM)
-        month_str = match.group(1)
-        day = match.group(2)
-        year = match.group(3)
-        start_hour = match.group(4)
-        end_hour = match.group(5)
-        am_pm = match.group(6)
-        if year is None:
-            year = datetime.now().year
-            event_datetime_str = f"{month_str} {day}, {year} {start_hour}{am_pm}"
-        else:
-            # Convert the extracted values to a proper datetime format
-            event_datetime_str = f"{month_str} {day}, {year} {start_hour}{am_pm}"
-
-        event_datetime = datetime.strptime(event_datetime_str, '%B %d, %Y %I%p') if len(month_str) > 3 else datetime.strptime(event_datetime_str, '%b %d, %Y %I%p')
+def extract_datetime_from_body(body):
+    prompt = f"Extract the date and time from the following text:\n\n{body}\n\nPlease respond with the date-time in a format like '2024-08-16 09:00' and the end hour in an integer value with no newline."
+    
+    try:
+        response = openai.chat.completions.create(
+            model="gpt-4o-mini",  
+            messages=[
+                {"role": "user", "content": prompt}
+            ]
+        )
         
+        # Parse the response
+        output = response.choices[0].message.content
+        
+        # Assuming the response is structured with date-time and end hour, split it accordingly
+        
+        date_time_str = output[:-2].strip()
+        end_hour = output[17:]
+        
+        # print(date_time_str, type(int(end_hour)), len(end_hour))
+        event_datetime = datetime.strptime(date_time_str, '%Y-%m-%d %H:%M')
+
         return event_datetime, int(end_hour)
-    else:
+    
+    except Exception as e:
+        print(f"Error occurred: {e}")
         return None, None
 
-def generate_ics_event(subject, body):
+def generate_ics_event(subject, body, event_datetime, end_hour):
     # Extract date and time from email body
     event_datetime, end_hour = extract_datetime_from_body(body)
 
@@ -94,9 +99,11 @@ def generate_ics_event(subject, body):
 
 
 def send_email(to, cc, subject, body, attachment):
-    from_email = 'your.email@gmail.com'
-    password = 'your_app_password'
-    ics_filename = generate_ics_event(subject, body)
+    from_email = 'your.email@email.com'
+    password = 'password'
+    event_datetime, end_hour = extract_datetime_from_body(body)
+
+    ics_filename = generate_ics_event(subject, body, event_datetime, end_hour)
 
     msg = MIMEMultipart()
     msg['From'] = from_email
@@ -127,5 +134,3 @@ def send_email(to, cc, subject, body, attachment):
 
 if __name__ == '__main__':
     app.run(debug=True)
-
-
