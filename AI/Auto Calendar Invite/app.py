@@ -12,8 +12,7 @@ from datetime import datetime, timedelta
 app = Flask(__name__)
 
 # Organizer details
-ORGANIZER_EMAIL = 'slackycode@gmail.com'  # Organizer email
-ORGANIZER_NAME = 'Chesca Viduya'         # Organizer name
+ORGANIZER_NAME = 'ORGANIZER NAME'
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
